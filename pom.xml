@@ -14,6 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.0</junit.version>
         <itext.version>7.2.5</itext.version>
+        <h2.version>2.3.232</h2.version>
     </properties>
 
     <dependencies>
@@ -60,22 +61,10 @@
             <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
-        
-
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-sync</artifactId>
-            <version>4.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>bson</artifactId>
-            <version>4.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-core</artifactId>
-            <version>4.10.2</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
         </dependency>
         <!-- Dependencias para generación de PDF -->
         <dependency>
@@ -153,12 +142,11 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>app.HelloApplication</mainClass> <!-- Cambia por tu clase main -->
+                            <mainClass>app.HelloApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
-            <!-- Plugin de JavaFX para Maven -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -180,10 +168,9 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.tiendacasa/HelloApplication</mainClass>
+                            <mainClass>app.HelloApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -194,7 +181,9 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!-- Maven Shade Plugin - DESACTIVADO para permitir jpackage -->
+            <!-- Usar maven-assembly-plugin como alternativa para generar FAT JAR -->
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
@@ -223,7 +212,9 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
+
+            <!-- Maven Assembly Plugin - Para generar JAR con todas las dependencias -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -245,6 +236,46 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Exec Maven Plugin - Para ejecutar jpackage -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jpackage</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jpackage</executable>
+                            <arguments>
+                                <argument>--input</argument>
+                                <argument>${project.build.directory}/libs</argument>
+                                <argument>--name</argument>
+                                <argument>${app.name}</argument>
+                                <argument>--main-jar</argument>
+                                <argument>${project.artifactId}-${project.version}-jar-with-dependencies.jar</argument>
+                                <argument>--main-class</argument>
+                                <argument>app.HelloApplication</argument>
+                                <argument>--type</argument>
+                                <argument>exe</argument>
+                                <argument>--app-version</argument>
+                                <argument>${app.version}</argument>
+                                <argument>--vendor</argument>
+                                <argument>${app.vendor}</argument>
+                                <argument>--dest</argument>
+                                <argument>${project.build.directory}/dist</argument>
+                                <argument>--icon</argument>
+                                <argument>${project.basedir}/src/main/resources/icon.ico</argument>
+                            </arguments>
+                            <skip>true</skip> <!-- Cambiar a false cuando esté listo para empaquetar -->
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

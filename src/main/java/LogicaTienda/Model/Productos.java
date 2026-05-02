@@ -2,8 +2,6 @@ package LogicaTienda.Model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.bson.types.ObjectId;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,28 +11,17 @@ import java.io.Serializable;
 public class Productos implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    
-    @BsonProperty("_id")
-    private ObjectId id;  // MongoDB _id field
 
-    @BsonProperty("idProducto")
     private String idProducto;
-    @BsonProperty("nombre")
     private String nombre;
-    @BsonProperty("precio")
     private double precio;
-    @BsonProperty("precioParaVender")
     private double precioParaVender;
-    @BsonProperty("porcentajeGanancia")
     private double porcentajeGanancia;
-    @BsonProperty("cantidad")
     private int cantidad;
-    @BsonProperty("stock")
     private int stock;
-    
-    // No-arg constructor required for MongoDB
+
+    // No-arg constructor
     public Productos() {
-        this.id = new ObjectId();
         this.idProducto = "";
         this.nombre = "";
         this.precio = 0.0;
@@ -43,6 +30,7 @@ public class Productos implements Serializable {
         this.cantidad = 0;
         this.stock = 0;
     }
+
     public Productos(String idProducto, String nombre, double precio, int cantidad, int stock) {
         this();
         this.idProducto = idProducto;
@@ -66,11 +54,12 @@ public class Productos implements Serializable {
     }
 
     public void calcularPrecioVenta() {
-        // Calcular el precio con decimales y luego redondear al entero más cercano
         double precioConGanancia = this.precio * (1 + (this.porcentajeGanancia / 100));
         this.precioParaVender = Math.round(precioConGanancia);
     }
+
+    @Override
     public String toString() {
-        return "nombre del producto: "+this.nombre+" ID del producto: "+this.idProducto+" cantidad en almacen: "+this.stock+" el precio de costo: "+this.precio+" el precio de venta: "+this.precioParaVender;
+        return "nombre del producto: " + this.nombre + " ID del producto: " + this.idProducto + " cantidad en almacen: " + this.stock + " el precio de costo: " + this.precio + " el precio de venta: " + this.precioParaVender;
     }
 }

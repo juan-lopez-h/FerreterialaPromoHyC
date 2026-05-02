@@ -184,6 +184,28 @@ public class PedidoController implements Initializable {
 
     @FXML
     private void volverMenu(ActionEvent event) {
+        // Devolver productos al inventario antes de volver
+        if (carritoDTO != null && carritoDTO.getProductos() != null && !carritoDTO.getProductos().isEmpty()) {
+            // Devolver productos al inventario automáticamente
+            for (Productos producto : carritoDTO.getProductos()) {
+                try {
+                    ProductoService.actualizarStock(
+                        producto.getIdProducto(),
+                        producto.getCantidad(),
+                        false // false para devolver al stock (añadir)
+                    );
+                    LOGGER.log(Level.INFO, "Producto devuelto al inventario: " + producto.getIdProducto() + ", Cantidad: " + producto.getCantidad());
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "Error al devolver producto al inventario: " + producto.getIdProducto(), e);
+                }
+            }
+            // Limpiar carrito
+            carritoDTO.getProductos().clear();
+            carritoDTO.actualizarTotal();
+
+            mostrarAlerta("Operación completada", "Los productos han sido devueltos al inventario.", Alert.AlertType.INFORMATION);
+        }
+
         cambiarVentanaConDTO(event, "Ventas-view.fxml", "Ventas");
     }
 
@@ -231,17 +253,17 @@ public class PedidoController implements Initializable {
             // Cargar directamente la pantalla de pago
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/tiendaGUI/pago-view.fxml"));
             Parent root = loader.load();
-            
+
             // Configurar el controlador de pago con el carrito
             PagoController pagoController = loader.getController();
             pagoController.setCarritoDTO(carritoDTO);
-            
+
             // Mostrar la pantalla de pago
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Procesar Pago");
             stage.show();
-            
+
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error al cargar la pantalla de pago", e);
             mostrarAlerta("Error", "No se pudo cargar la pantalla de pago: " + e.getMessage(), 
@@ -312,14 +334,34 @@ public class PedidoController implements Initializable {
 
     private void volverAVentas(ActionEvent event) {
         try {
+            // Devolver productos al inventario si hay productos en el carrito
+            if (carritoDTO != null && carritoDTO.getProductos() != null && !carritoDTO.getProductos().isEmpty()) {
+                // Devolver productos al inventario automáticamente
+                for (Productos producto : carritoDTO.getProductos()) {
+                    try {
+                        ProductoService.actualizarStock(
+                            producto.getIdProducto(),
+                            producto.getCantidad(),
+                            false // false para devolver al stock (añadir)
+                        );
+                        LOGGER.log(Level.INFO, "Producto devuelto al inventario: " + producto.getIdProducto() + ", Cantidad: " + producto.getCantidad());
+                    } catch (Exception e) {
+                        LOGGER.log(Level.SEVERE, "Error al devolver producto al inventario: " + producto.getIdProducto(), e);
+                    }
+                }
+                // Limpiar carrito
+                carritoDTO.getProductos().clear();
+                carritoDTO.actualizarTotal();
+
+                mostrarAlerta("Operación completada", "Los productos han sido devueltos al inventario.", Alert.AlertType.INFORMATION);
+            }
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/tiendaGUI/ventas-view.fxml"));
             Parent root = loader.load();
 
-            // Si hay un carrito, pasarlo de vuelta (vacío)
-            if (carritoDTO != null) {
-                VentasController ventasController = loader.getController();
-                ventasController.setCarritoDTO(new CarritoDTO(FXCollections.observableArrayList(), 0.0));
-            }
+            // Pasar el carrito (vacío o con los productos si el usuario decidió no devolverlos)
+            VentasController ventasController = loader.getController();
+            ventasController.setCarritoDTO(carritoDTO);
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -336,4 +378,3 @@ public class PedidoController implements Initializable {
         private record ClienteInfo(String nombre, String identificacion, String email, String telefono) {
     }
 }
-

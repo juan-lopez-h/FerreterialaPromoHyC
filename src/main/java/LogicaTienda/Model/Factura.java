@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 @Getter
 @Setter
 public class Factura implements Serializable {
@@ -25,8 +26,8 @@ public class Factura implements Serializable {
     private String clienteEmail;
     private String clienteTelefono;
     private String tipoFactura;
-    private String estado = "Activa"; // Estados posibles: Activa, Anulada, etc.
-    private boolean eliminada = false; // Flag para borrado lógico
+    private String estado = "Activa";
+    private boolean eliminada = false;
     private double total;
     private String metodoPago;
     private String referenciaPago;
@@ -66,11 +67,16 @@ public class Factura implements Serializable {
         this.clienteNombre = clienteNombre;
         this.clienteIdentificacion = clienteIdentificacion;
     }
+
     public double getTotal() {
-        return productos.stream()
-                .mapToDouble(p -> p.getPrecioParaVender() * p.getCantidad())
-                .sum();
+        if (productos != null && !productos.isEmpty()) {
+            return productos.stream()
+                    .mapToDouble(p -> p.getPrecioParaVender() * p.getCantidad())
+                    .sum();
+        }
+        return total;
     }
+
     @Override
     public String toString() {
         return "Factura [ID=" + id + ", Fecha=" + fecha + ", Total=" + getTotal() + ", Cliente=" + clienteNombre + "]";

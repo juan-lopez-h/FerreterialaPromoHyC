@@ -195,8 +195,25 @@ public class PagoController implements Initializable {
 
     @FXML
     private void btnVolverAction(ActionEvent event) {
-        // Al volver, puedes pasar el mismo DTO de carrito
+        // Al volver, devolver los productos al inventario y pasar el mismo DTO de carrito
         try {
+            // Devolver los productos al inventario
+            if (carritoDTO != null && carritoDTO.getProductos() != null) {
+                for (Productos producto : carritoDTO.getProductos()) {
+                    try {
+                        ProductoService.actualizarStock(
+                            producto.getIdProducto(),
+                            producto.getCantidad(),
+                            false // false para devolver al stock (añadir)
+                        );
+                        LOGGER.log(Level.INFO, "Producto devuelto al inventario: " + producto.getIdProducto() + ", Cantidad: " + producto.getCantidad());
+                    } catch (Exception e) {
+                        LOGGER.log(Level.SEVERE, "Error al devolver producto al inventario: " + producto.getIdProducto(), e);
+                    }
+                }
+            }
+
+            // Cargar la vista del carrito
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/tiendaGUI/pedido-view.fxml"));
             Parent root = loader.load();
             PedidoController ctrl = loader.getController();
@@ -231,7 +248,7 @@ public class PagoController implements Initializable {
                         ProductoService.actualizarStock(
                             producto.getIdProducto(),
                             producto.getCantidad(),
-                            false // false para restar del stock
+                            true // true para restar del stock (venta)
                         );
                     } catch (Exception e) {
                         LOGGER.log(Level.SEVERE, "Error al actualizar el stock del producto: " + producto.getIdProducto(), e);
@@ -486,7 +503,19 @@ public class PagoController implements Initializable {
         try {
             // Obtener la ruta de la carpeta de Descargas
             String userHome = System.getProperty("user.home");
-            File downloadsDir = getFile(userHome);
+            File downloadsDir = new File(userHome, "Downloads");
+
+            // Si no existe la carpeta Downloads, intentar con Descargas (español)
+            if (!downloadsDir.exists() || !downloadsDir.isDirectory()) {
+                downloadsDir = new File(userHome, "Descargas");
+                // Si tampoco existe, crear la carpeta
+                if (!downloadsDir.exists()) {
+                    boolean created = downloadsDir.mkdirs();
+                    if (!created) {
+                        throw new IOException("No se pudo crear la carpeta de descargas");
+                    }
+                }
+            }
 
             // Crear el nombre del archivo con timestamp
             String timeStamp = java.time.LocalDateTime.now().format(
@@ -512,23 +541,6 @@ public class PagoController implements Initializable {
         } catch (Exception e) {
             mostrarAlerta("❌ Error","❌ Error al guardar la factura: " + e.getMessage(), Alert.AlertType.ERROR);
         }
-    }
-
-    private File getFile(String userHome) throws IOException {
-        File downloadsDir = new File(userHome, "Downloads");
-
-        // Si no existe la carpeta Downloads, intentar con Descargas (español)
-        if (!downloadsDir.exists() || !downloadsDir.isDirectory()) {
-            downloadsDir = new File(userHome, "Descargas");
-            // Si tampoco existe, crear la carpeta
-            if (!downloadsDir.exists()) {
-                boolean created = downloadsDir.mkdirs();
-                if (!created) {
-                    throw new IOException("No se pudo crear la carpeta de descargas");
-                }
-            }
-        }
-        return downloadsDir;
     }
 
     private Factura obtenerFacturaDesdePagoSeleccionado() {

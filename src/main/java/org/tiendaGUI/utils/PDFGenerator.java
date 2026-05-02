@@ -41,6 +41,17 @@ public class PDFGenerator {
      * @throws IllegalArgumentException Si la factura es nula
      */
     public static void generarFacturaPDF(Factura factura) throws IOException {
+        generarFacturaPDF(factura, false);
+    }
+
+    /**
+     * Genera un archivo PDF para la factura proporcionada.
+     * @param factura La factura a generar en formato PDF
+     * @param overwrite Si es true, sobrescribe el archivo si ya existe
+     * @throws IOException Si ocurre un error al crear o escribir el archivo PDF
+     * @throws IllegalArgumentException Si la factura es nula
+     */
+    public static void generarFacturaPDF(Factura factura, boolean overwrite) throws IOException {
         if (factura == null) {
             throw new IllegalArgumentException("La factura no puede ser nula");
         }
@@ -57,13 +68,25 @@ public class PDFGenerator {
             throw new IOException("No se pudo crear el directorio de descargas: " + downloads.getAbsolutePath());
         }
 
-        // Crear archivo de salida
+        // Determinar el nombre del archivo según el tipo de factura
         String fileName = "FACTURA_" + (factura.getId() != null ? factura.getId() : "SIN_ID") + ".pdf";
+        if (factura.getTipoFactura() != null && factura.getTipoFactura().equals("Cotizacion")) {
+            fileName = "COTIZACION_" + (factura.getId() != null ? factura.getId() : "SIN_ID") + ".pdf";
+        }
+
+        // Crear archivo de salida
         File file = new File(downloads, fileName);
 
         // Verificar si el archivo ya existe
         if (file.exists()) {
-            throw new IOException("El archivo ya existe: " + file.getAbsolutePath());
+            if (overwrite) {
+                // Intentar eliminar el archivo existente
+                if (!file.delete()) {
+                    throw new IOException("No se pudo eliminar el archivo existente: " + file.getAbsolutePath());
+                }
+            } else {
+                throw new IOException("El archivo ya existe: " + file.getAbsolutePath());
+            }
         }
 
         // Inicializar recursos
@@ -122,27 +145,6 @@ public class PDFGenerator {
             if (factura.getTipoFactura() != null && factura.getTipoFactura().equals("Cotizacion")) {
                 tipoDocumento = "COTIZACIÓN";
                 prefijo = "Cotización No. ";
-                // Si es una cotización, cambiar el nombre del archivo
-                fileName = "COTIZACION_" + (factura.getId() != null ? factura.getId() : "SIN_ID") + ".pdf";
-                file = new File(downloads, fileName);
-
-                // Verificar si el archivo ya existe
-                if (file.exists()) {
-                    throw new IOException("El archivo ya existe: " + file.getAbsolutePath());
-                }
-
-                // Actualizar el writer y el documento
-                if (writer != null) {
-                    try {
-                        writer.close();
-                    } catch (Exception ex) {
-                        // Ignorar error al cerrar
-                    }
-                }
-                writer = new PdfWriter(file.getAbsolutePath());
-                pdf = new PdfDocument(writer);
-                document = new Document(pdf, PageSize.A4);
-                document.setMargins(40, 36, 36, 36);
             }
 
             Paragraph facturaInfo = new Paragraph()
@@ -228,16 +230,8 @@ public class PDFGenerator {
                         .setTextAlignment(TextAlignment.RIGHT)));
                 productsTable.addCell(createCell(formatMoney(subtotal), fontBold, 10, null, TextAlignment.RIGHT));
 
-                // Agregar fila de IVA (opcional)
-                // double iva = subtotal * 0.19; // 19% de IVA
-                // productsTable.addCell(new Cell(1, 3)
-                //     .add(new Paragraph("IVA (19%):")
-                //         .setFont(fontBold)
-                //         .setTextAlignment(TextAlignment.RIGHT)));
-                // productsTable.addCell(createCell(formatMoney(iva), fontNormal, 10, null, TextAlignment.RIGHT));
-
                 // Agregar fila de total
-                double totalFactura = subtotal; // + iva;
+                double totalFactura = subtotal;
                 productsTable.addCell(new Cell(1, 3)
                     .add(new Paragraph("TOTAL:")
                         .setFont(fontBold)
@@ -290,7 +284,8 @@ public class PDFGenerator {
             document.close();
 
             // Confirmación de creación
-            System.out.println("✅ Factura PDF generada exitosamente en: " + file.getAbsolutePath());
+            String mensajeExito = overwrite ? "✅ Factura PDF regenerada exitosamente en: " : "✅ Factura PDF generada exitosamente en: ";
+            System.out.println(mensajeExito + file.getAbsolutePath());
 
         } catch (Exception e) {
             // Cerrar recursos en caso de error

@@ -1,101 +1,213 @@
 package LogicaTienda.Services;
 
-import LogicaTienda.Data.MongoDBConnection;
+import LogicaTienda.Data.H2Database;
 import LogicaTienda.Model.Productos;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
-import org.bson.conversions.Bson;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ProductoService {
-    private static final MongoCollection<Productos> productosCollection = 
-            MongoDBConnection.getCollection("productos", Productos.class);
+    private ProductoService() {
+    }
 
     public static List<Productos> obtenerTodosLosProductos() {
-        return productosCollection.find().into(new ArrayList<>());
+        List<Productos> productos = new ArrayList<>();
+        String sql = "SELECT id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad, stock FROM productos ORDER BY nombre";
+
+        try (Connection conn = H2Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                productos.add(mapProducto(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error al obtener productos: " + e.getMessage());
+        }
+
+        return productos;
     }
 
     public static Productos buscarProductoPorId(String id) {
-        return productosCollection.find(Filters.eq("idProducto", id)).first();
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+
+        String sql = "SELECT id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad, stock FROM productos WHERE id_producto = ?";
+
+        try (Connection conn = H2Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapProducto(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error al buscar producto por ID: " + e.getMessage());
+        }
+
+        return null;
     }
 
     public static void guardarProducto(Productos producto) {
-        // Si el producto ya existe, actualizarlo
-        if (producto.getIdProducto() != null && buscarProductoPorId(producto.getIdProducto()) != null) {
+        if (producto == null) {
+            return;
+        }
+
+        if (producto.getIdProducto() == null || producto.getIdProducto().isBlank()) {
+            producto.setIdProducto(generarIdProductoUnico());
+        }
+
+        if (buscarProductoPorId(producto.getIdProducto()) != null) {
             actualizarProducto(producto);
-        } else {
-            // Si es un producto nuevo, generamos un ID
-            if (producto.getIdProducto() == null || producto.getIdProducto().isEmpty()) {
-                producto.setIdProducto(java.util.UUID.randomUUID().toString().substring(0, 8));
-            }
-            productosCollection.insertOne(producto);
+            return;
+        }
+
+        if (producto.getPrecioParaVender() <= 0 && producto.getPorcentajeGanancia() > 0) {
+            producto.calcularPrecioVenta();
+        }
+
+        String sql = "INSERT INTO productos (id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad, stock) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = H2Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, producto.getIdProducto());
+            ps.setString(2, producto.getNombre());
+            ps.setDouble(3, producto.getPrecio());
+            ps.setDouble(4, producto.getPrecioParaVender());
+            ps.setDouble(5, producto.getPorcentajeGanancia());
+            ps.setInt(6, producto.getCantidad());
+            ps.setInt(7, producto.getStock());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("❌ No se pudo guardar el producto: " + e.getMessage());
         }
     }
 
     public static void actualizarProducto(Productos producto) {
-        Bson filter = Filters.eq("idProducto", producto.getIdProducto());
-        Bson updates = Updates.combine(
-            Updates.set("nombre", producto.getNombre()),
-            Updates.set("precio", producto.getPrecio()),
-            Updates.set("precioParaVender", producto.getPrecioParaVender()),
-            Updates.set("porcentajeGanancia", producto.getPorcentajeGanancia()),
-            Updates.set("cantidad", producto.getCantidad()),
-            Updates.set("stock", producto.getStock())
-        );
-        productosCollection.updateOne(filter, updates);
+        if (producto == null || producto.getIdProducto() == null || producto.getIdProducto().isBlank()) {
+            return;
+        }
+
+        if (producto.getPrecioParaVender() <= 0 && producto.getPorcentajeGanancia() > 0) {
+            producto.calcularPrecioVenta();
+        }
+
+        String sql = "UPDATE productos SET nombre = ?, precio = ?, precio_para_vender = ?, porcentaje_ganancia = ?, cantidad = ?, stock = ? WHERE id_producto = ?";
+
+        try (Connection conn = H2Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, producto.getNombre());
+            ps.setDouble(2, producto.getPrecio());
+            ps.setDouble(3, producto.getPrecioParaVender());
+            ps.setDouble(4, producto.getPorcentajeGanancia());
+            ps.setInt(5, producto.getCantidad());
+            ps.setInt(6, producto.getStock());
+            ps.setString(7, producto.getIdProducto());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("❌ No se pudo actualizar el producto: " + e.getMessage());
+        }
     }
 
     public static void eliminarProducto(String idProducto) {
-        productosCollection.deleteOne(Filters.eq("idProducto", idProducto));
+        if (idProducto == null || idProducto.isBlank()) {
+            return;
+        }
+
+        String sql = "DELETE FROM productos WHERE id_producto = ?";
+        try (Connection conn = H2Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, idProducto);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("❌ No se pudo eliminar el producto: " + e.getMessage());
+        }
     }
 
     public static void actualizarStock(String idProducto, int cantidad, boolean esVenta) {
-        if (idProducto == null || idProducto.isEmpty()) {
+        if (idProducto == null || idProducto.isBlank()) {
             System.err.println("Error: ID de producto no válido");
             return;
         }
 
-        // Usar una operación atómica para actualizar el stock directamente en MongoDB
-        Bson filter = Filters.eq("idProducto", idProducto);
-        
-        try {
-            if (esVenta) {
-                // Para ventas: Primero intentamos descontar de la cantidad disponible
-                Bson update = Updates.combine(
-                    Updates.inc("cantidad", -Math.min(cantidad, buscarProductoPorId(idProducto).getCantidad())),
-                    Updates.inc("stock", -Math.max(0, cantidad - buscarProductoPorId(idProducto).getCantidad()))
-                );
-                productosCollection.updateOne(filter, update);
-                
-                // Verificar si hay suficiente stock después de la operación
-                Productos productoActualizado = buscarProductoPorId(idProducto);
-                if (productoActualizado.getCantidad() < 0 || productoActualizado.getStock() < 0) {
-                    // Ajustar valores negativos a cero
-                    Bson ajuste = Updates.combine(
-                        Updates.set("cantidad", Math.max(0, productoActualizado.getCantidad())),
-                        Updates.set("stock", Math.max(0, productoActualizado.getStock()))
-                    );
-                    productosCollection.updateOne(filter, ajuste);
-                    
-                    System.out.println("⚠️ No hay suficiente stock para el producto: " + 
-                                      productoActualizado.getNombre() + 
-                                      ". Se ajustaron los valores.");
-                }
-            } else {
-                // Para devoluciones: Añadir al inventario
-                Bson update = Updates.inc("cantidad", cantidad);
-                productosCollection.updateOne(filter, update);
-            }
-            
-            // Registrar la operación
-            System.out.println("Stock actualizado para el producto " + idProducto + 
-                             ". Operación: " + (esVenta ? "Venta" : "Devolución") + 
-                             ", Cantidad: " + cantidad);
-        } catch (Exception e) {
+        try (Connection conn = H2Database.getConnection()) {
+            ajustarStock(conn, idProducto, cantidad, esVenta);
+        } catch (SQLException e) {
             System.err.println("Error al actualizar el stock del producto " + idProducto + ": " + e.getMessage());
         }
+    }
+
+    static void ajustarStock(Connection conn, String idProducto, int cantidad, boolean esVenta) throws SQLException {
+        if (idProducto == null || idProducto.isBlank()) {
+            return;
+        }
+
+        String buscarSql = "SELECT cantidad, stock FROM productos WHERE id_producto = ?";
+        try (PreparedStatement buscar = conn.prepareStatement(buscarSql)) {
+            buscar.setString(1, idProducto);
+            try (ResultSet rs = buscar.executeQuery()) {
+                if (!rs.next()) {
+                    System.err.println("Producto no encontrado para actualizar stock: " + idProducto);
+                    return;
+                }
+
+                int cantidadActual = rs.getInt("cantidad");
+                int stockActual = rs.getInt("stock");
+
+                if (esVenta) {
+                    int cantidadARestar = Math.min(cantidad, cantidadActual);
+                    int stockARestar = Math.max(0, cantidad - cantidadARestar);
+
+                    String updateSql = "UPDATE productos SET cantidad = GREATEST(cantidad - ?, 0), stock = GREATEST(stock - ?, 0) WHERE id_producto = ?";
+                    try (PreparedStatement update = conn.prepareStatement(updateSql)) {
+                        update.setInt(1, cantidadARestar);
+                        update.setInt(2, stockARestar);
+                        update.setString(3, idProducto);
+                        update.executeUpdate();
+                    }
+                } else {
+                    String updateSql = "UPDATE productos SET cantidad = cantidad + ? WHERE id_producto = ?";
+                    try (PreparedStatement update = conn.prepareStatement(updateSql)) {
+                        update.setInt(1, cantidad);
+                        update.setString(2, idProducto);
+                        update.executeUpdate();
+                    }
+                }
+
+                System.out.println("Stock actualizado para el producto " + idProducto +
+                        ". Operación: " + (esVenta ? "Venta" : "Devolución") +
+                        ", Cantidad: " + cantidad +
+                        ", Stock previo: " + stockActual +
+                        ", Cantidad previa: " + cantidadActual);
+            }
+        }
+    }
+
+    private static Productos mapProducto(ResultSet rs) throws SQLException {
+        Productos producto = new Productos();
+        producto.setIdProducto(rs.getString("id_producto"));
+        producto.setNombre(rs.getString("nombre"));
+        producto.setPrecio(rs.getDouble("precio"));
+        producto.setPrecioParaVender(rs.getDouble("precio_para_vender"));
+        producto.setPorcentajeGanancia(rs.getDouble("porcentaje_ganancia"));
+        producto.setCantidad(rs.getInt("cantidad"));
+        producto.setStock(rs.getInt("stock"));
+        return producto;
+    }
+
+    private static String generarIdProductoUnico() {
+        String id;
+        do {
+            id = UUID.randomUUID().toString().replace("-", "").substring(0, 8).toUpperCase();
+        } while (buscarProductoPorId(id) != null);
+        return id;
     }
 }
