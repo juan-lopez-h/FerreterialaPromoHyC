@@ -1,0 +1,15 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<VBox spacing="10" alignment="CENTER" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.tiendaGUI.Controllers.ConfirmacionDomicilioController">
+    <Label text="Confirmación de datos de Domicilio" style="-fx-font-size: 18px;"/>
+    <Label fx:id="lblDireccion" />
+    <Label fx:id="lblReferencia" />
+    <Label fx:id="lblPostal" />
+    <Label fx:id="lblApartamento" />
+    <Label fx:id="lblCelular" />
+    <Label fx:id="lblFechaEntrega" />
+    <Label fx:id="lblFactura" />
+    <Button fx:id="btnContinuar" onAction="#btnContinuarAction" text="Confirmar Domicilio" />
+    <Button fx:id="btnVolver" onAction="#btnVolverAction" text="Volver y Editar" />
+</VBox>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.tiendaGUI.Controllers.PedidoController" stylesheets="@css/estilos.css">
+
+    <!-- Encabezado -->
+    <Label id="Panel1" alignment="CENTER" contentDisplay="TOP" style="-fx-background-color: #90B1DB;"
+           text="FERRETERIA LA PROMO H&amp;C" textAlignment="CENTER">
+        <font>
+            <Font size="21.0"/>
+        </font>
+        <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
+        <AnchorPane.leftAnchor>0.0</AnchorPane.leftAnchor>
+        <AnchorPane.rightAnchor>0.0</AnchorPane.rightAnchor>
+        <prefHeight>84.0</prefHeight>
+    </Label>
+
+    <!-- Tabla -->
+    <TableView fx:id="tblProductos">
+        <columns>
+            <TableColumn fx:id="columnaNombre" text="Nombre"/>
+            <TableColumn fx:id="columnaValor" text="Valor"/>
+            <TableColumn fx:id="columnaCantidad" text="Cantidad"/>
+            <TableColumn fx:id="ColumnaIdProducto" text="IdProducto"/>
+        </columns>
+        <AnchorPane.topAnchor>84.0</AnchorPane.topAnchor>
+        <AnchorPane.leftAnchor>10.0</AnchorPane.leftAnchor>
+        <AnchorPane.rightAnchor>10.0</AnchorPane.rightAnchor>
+        <AnchorPane.bottomAnchor>50.0</AnchorPane.bottomAnchor>
+        <cursor>
+        <Cursor fx:constant="DEFAULT"/>
+        </cursor>
+    </TableView>
+
+    <!-- Barra de botones -->
+    <ToolBar prefWidth="798.0" style="-fx-background-color: #90B1DB;">
+        <AnchorPane.bottomAnchor>0.0</AnchorPane.bottomAnchor>
+        <AnchorPane.leftAnchor>10.0</AnchorPane.leftAnchor>
+        <AnchorPane.rightAnchor>4.0</AnchorPane.rightAnchor>
+        <prefHeight>40.0</prefHeight>
+        <Button fx:id="btnPagar" onAction="#irApagar" style="-fx-background-color: #A9C6E8;" text="Pagar">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="btnFacturaElectro" onAction="#generarFacturaElectronica"
+                style="-fx-background-color: #A8E6CF;" text="FacturaElectronica">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="btonFacturaImprs" onAction="#imprimirFactura" style="-fx-background-color: #A8E6CF;"
+                text="FacturaImpr">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="btnAgregarProducto" onAction="#BtnAgregarProductoOnAction"
+                style="-fx-background-color: #A9C6E8;" text="AgregarProducto">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="btonEliminarProdct" onAction="#eliminarProducto"
+                style="-fx-background-color: #D46A6A; -fx-text-fill: white;" text="EliminarProducto">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="btnDomicilio" onAction="#irADomicilio" style="-fx-background-color: #A9C6E8;"
+                text="Domicilio">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="BtnVolver" onAction="#volverMenu" style="-fx-background-color: #A8E6CF;" text="Volver">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="BtnBuscar" onAction="#MetodoBusquedaTablaCarrito" style="-fx-background-color: #A9C6E8;"
+                text="Buscar">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="btnRestablecerTabla" onAction="#RestablecerTablaAction"
+                style="-fx-background-color: #A9C6E8;" text="Restablecertabla">
+            <font>
+                <Font name="Maiandra GD" size="12.0"/>
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+    </ToolBar>
+</AnchorPane>

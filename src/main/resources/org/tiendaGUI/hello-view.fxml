@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="PanelPrincipal"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.tiendaGUI.Controllers.HelloController"
+            stylesheets="@css/estilos.css"
+            minHeight="600.0"
+            minWidth="600.0">
+
+    <!-- Encabezado -->
+    <Label fx:id="panelArriba"
+           alignment="CENTER"
+           style="-fx-background-color: #90B1DB;"
+           text="Ferreteria La Promo H&amp;C"
+           textOverrun="WORD_ELLIPSIS"
+           AnchorPane.topAnchor="0.0"
+           AnchorPane.leftAnchor="0.0"
+           AnchorPane.rightAnchor="0.0">
+        <font>
+            <Font name="Castellar" size="20.0"/>
+        </font>
+        <prefHeight>60.0</prefHeight>
+    </Label>
+
+    <!-- Panel del medio con el logo -->
+    <StackPane fx:id="ImagenDelMedio"
+               style="-fx-background-color: #ffffff;"
+               AnchorPane.topAnchor="60.0"
+               AnchorPane.bottomAnchor="50.0"
+               AnchorPane.leftAnchor="0.0"
+               AnchorPane.rightAnchor="0.0">
+
+        <ImageView fx:id="logoImageView"
+                   preserveRatio="true"
+                   smooth="true"
+                   fitWidth="500"
+                   fitHeight="380"
+                   style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);">
+        </ImageView>
+    </StackPane>
+
+    <!-- Barra inferior -->
+    <ToolBar fx:id="PanelAbajo"
+             style="-fx-background-color: #90B1DB;"
+             prefHeight="50.0"
+             AnchorPane.bottomAnchor="0.0"
+             AnchorPane.leftAnchor="0.0"
+             AnchorPane.rightAnchor="0.0">
+
+        <Button fx:id="BotonInvetario"
+                mnemonicParsing="false"
+                onAction="#presionarBotonInventario"
+                text="Inventario"
+                prefWidth="120.0"/>
+
+        <Button fx:id="BotonVentas"
+                mnemonicParsing="false"
+                onAction="#presionarBotonVentas"
+                text="Vender"
+                prefWidth="120.0"/>
+
+        <Button fx:id="BotonEstadisticas"
+                mnemonicParsing="false"
+                onAction="#presionarBotonEstadisticas"
+                text="Estadísticas"
+                prefWidth="120.0"/>
+
+        <Button fx:id="BotonEditorFacturas"
+                mnemonicParsing="false"
+                onAction="#presionarBotonEditorFacturas"
+                text="Editor de Facturas"
+                prefWidth="150.0"/>
+    </ToolBar>
+</AnchorPane>

@@ -1,0 +1,133 @@
+.button {
+    -fx-background-color: #90B1DB;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+
+/* Efecto hover para mejor UX */
+.button:hover {
+    -fx-background-color: #7fa3d3;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* Efecto al presionar */
+.button:pressed {
+    -fx-translate-y: 2px;
+    -fx-background-color: #729fcf;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 2, 0, 0, 1);
+}
+
+/* Estilos específicos para botones especiales */
+#btnPagar, #btnAgregarProducto, #BtnBuscar, #btnRestablecerTabla, #btnDomicilio {
+    -fx-background-color: #A9C6E8;
+}
+
+#btnPagar:hover, #btnAgregarProducto:hover, #BtnBuscar:hover,
+#btnRestablecerTabla:hover, #btnDomicilio:hover {
+    -fx-background-color: #98d4f0;
+}
+
+/* Botones de facturación (verde) */
+#btnFacturaElectro, #btonFacturaImprs, #BtnVolver {
+    -fx-background-color: #A8E6CF;
+}
+
+#btnFacturaElectro:hover, #btonFacturaImprs:hover, #BtnVolver:hover {
+    -fx-background-color: #96dcc0;
+}
+
+/* Botón eliminar (rojo) */
+#btonEliminarProdct {
+    -fx-background-color: #D46A6A;
+    -fx-text-fill: white;
+}
+
+#btonEliminarProdct:hover {
+    -fx-background-color: #c85454;
+}
+
+/* Estilos para el encabezado */
+#Panel1 {
+    -fx-background-color: #90B1DB;
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+
+/* Estilos para la tabla */
+.table-view {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #90B1DB;
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+    -fx-border-color: #7fa3d3;
+    -fx-border-width: 0 1px 1px 0;
+}
+
+.table-view .column-header:hover {
+    -fx-background-color: #7fa3d3;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f8f9fa;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #90B1DB;
+    -fx-text-fill: #2c3e50;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+/* Estilos para la barra de herramientas */
+.tool-bar {
+    -fx-background-color: #90B1DB;
+    -fx-border-color: #7fa3d3;
+    -fx-border-width: 1px 0 0 0;
+    -fx-spacing: 10px;
+    -fx-padding: 5px 10px;
+}
+
+/* Transiciones suaves */
+.button {
+    -fx-transition: all 0.2s ease;
+}
+
+/* Estilo para el AnchorPane principal */
+.anchor-pane {
+    -fx-background-color: #ffffff;
+}
+
+/* Mejora del cursor para elementos interactivos */
+.table-view .table-row-cell {
+    -fx-cursor: hand;
+}
+
+/* Estilo para texto seleccionado en la tabla */
+.table-view .table-cell {
+    -fx-text-fill: #2c3e50;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: #2c3e50;
+}

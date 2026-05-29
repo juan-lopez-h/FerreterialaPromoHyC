@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="488.0" prefWidth="708.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.tiendaGUI.Controllers.VentasController" stylesheets="@css/estilos.css">
+   <children>
+      <FlowPane alignment="TOP_CENTER" layoutX="14.0" layoutY="14.0" prefHeight="479.0" prefWidth="564.0" rowValignment="TOP">
+         <children>
+            <Label id="Panel1" alignment="CENTER" contentDisplay="TOP" prefHeight="60.0" prefWidth="682.0" style="-fx-background-color: #90B1DB;" text="FERRETERIA LA PROMO H&amp;C" textAlignment="CENTER">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Label>
+            
+            <!-- Barra de búsqueda -->
+            <HBox spacing="10.0" style="-fx-padding: 10; -fx-background-color: #f0f0f0;" prefWidth="665.0">
+                <TextField fx:id="txtBusqueda" onKeyReleased="#buscarProducto" promptText="Buscar por nombre o ID..." style="-fx-pref-width: 300; -fx-pref-height: 30;"/>
+                <Button onAction="#restablecerBusqueda" style="-fx-background-color: #A8E6CF;" text="Restablecer">
+                    <font>
+                        <Font name="Maiandra GD" size="12.0" />
+                    </font>
+                </Button>
+            </HBox>
+            <TableView fx:id="tablaProductos" nodeOrientation="LEFT_TO_RIGHT" prefHeight="360.0" prefWidth="665.0">
+              <columns>
+                <TableColumn fx:id="columnaNombre" prefWidth="150.39996945858002" text="Nombre" />
+                <TableColumn fx:id="columnaPrecio" minWidth="0.0" prefWidth="147.1999969482422" text="precio" />
+                  <TableColumn fx:id="columnaCantidad" prefWidth="135.20001220703125" text="cantidad" />
+                  <TableColumn fx:id="columnaId" prefWidth="128.79998779296875" text="ProductoID" />
+                  <TableColumn fx:id="columnaStock" prefWidth="102.39998779296877" text="Stock" />
+              </columns>
+            </TableView>
+            <ToolBar prefHeight="40.0" prefWidth="665.0" style="-fx-background-color: #90B1DB;">
+              <items>
+                <Button fx:id="BotonVender" mnemonicParsing="false" onAction="#btnVenderAction" text="Vender" />
+                  <Button fx:id="BtonActualizar" mnemonicParsing="false" onAction="#btnActualizarAction" text="Actualizar" />
+                  <Button fx:id="btnIrCarrito" onAction="#btnIrCarritoAction" text="Ir al Carrito" />
+                  <Button fx:id="BtnVolver" mnemonicParsing="false" onAction="#btnVolverAction" text="Volver" />
+              </items>
+            </ToolBar>
+         </children>
+      </FlowPane>
+   </children>
+</AnchorPane>
