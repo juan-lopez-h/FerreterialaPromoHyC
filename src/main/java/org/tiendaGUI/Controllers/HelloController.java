@@ -92,7 +92,7 @@ public class HelloController {
     }
 
     private void cargarProductosDesdeMongoDB() {
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 LOGGER.info("📡 Cargando productos desde MongoDB...");
                 List<Productos> productos = ProductoService.obtenerTodosLosProductos();
@@ -113,7 +113,9 @@ public class HelloController {
                                 AlertType.ERROR)
                 );
             }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML

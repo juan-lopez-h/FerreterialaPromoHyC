@@ -79,7 +79,7 @@ public class VentasController implements Initializable {
     }
 
     private void cargarProductos() {
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 List<Productos> productos = ProductoService.obtenerTodosLosProductos();
                 Platform.runLater(() -> {
@@ -115,7 +115,9 @@ public class VentasController implements Initializable {
                                 Alert.AlertType.ERROR)
                 );
             }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void cargarProductosDesdeMongoDB() {
@@ -190,7 +192,7 @@ public class VentasController implements Initializable {
             return;
         }
 
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 List<Productos> todosProductos = ProductoService.obtenerTodosLosProductos();
                 List<ProductoSimpleDTO> productosFiltrados = new ArrayList<>();
@@ -225,7 +227,9 @@ public class VentasController implements Initializable {
                                 Alert.AlertType.ERROR)
                 );
             }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML

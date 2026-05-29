@@ -88,6 +88,9 @@ public class HelloApplication extends Application {
             LOGGER.info("✅ Aplicación cerrada correctamente");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "❌ Error al cerrar la aplicación", e);
+        } finally {
+            // Asegurar que la JVM termine completamente
+            System.exit(0);
         }
     }
 }
