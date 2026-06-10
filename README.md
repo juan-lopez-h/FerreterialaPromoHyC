@@ -4,3 +4,4 @@ Se tiene en cuenta los criterios de los solicitantes del software contando con r
 Este repositorio fue recuperado de mi cuenta anterior juan-david-lopez, esto debido a que se me revoco el acceso a mi correo electronico anterior, debido a esto ahora tengo esta cuenta como principal para mis proximos desarrollos y proyectos 
  
 La estructura de el sistemas se encuentra en el siguiente link: 
+https://drive.google.com/file/d/1BQ3eXIeEEioKYQdwt2Kk6iLDTViO-bZ4/view?usp=sharing
