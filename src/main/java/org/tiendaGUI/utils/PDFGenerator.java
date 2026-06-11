@@ -20,7 +20,6 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.io.image.ImageDataFactory;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;

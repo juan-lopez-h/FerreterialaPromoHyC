@@ -24,7 +24,6 @@ public class Usuarios implements Serializable {
     private String email;
     private String telefono;
     private String username;
-    private String password;
     private String rol;
     private boolean activo;
     private Date fechaCreacion;
@@ -40,7 +39,6 @@ public class Usuarios implements Serializable {
         this.email = "";
         this.telefono = "";
         this.username = "";
-        this.password = "";
         this.rol = "CLIENTE";
         this.activo = true;
         this.fechaCreacion = new Date();
@@ -56,7 +54,6 @@ public class Usuarios implements Serializable {
         this.apellido = apellido;
         this.email = email;
         this.username = username;
-        this.password = password;
     }
 
     /**
