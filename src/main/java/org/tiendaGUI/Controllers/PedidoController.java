@@ -179,7 +179,7 @@ public class PedidoController implements Initializable {
 
     @FXML
     private void BtnAgregarProductoOnAction(ActionEvent event) {
-        cambiarVentanaConDTO(event, "Ventas-view.fxml", "Ventas");
+        cambiarVentanaConDTO(event, "ventas-view.fxml", "Ventas");
     }
 
     @FXML
@@ -206,7 +206,7 @@ public class PedidoController implements Initializable {
             mostrarAlerta("Operación completada", "Los productos han sido devueltos al inventario.", Alert.AlertType.INFORMATION);
         }
 
-        cambiarVentanaConDTO(event, "Ventas-view.fxml", "Ventas");
+        cambiarVentanaConDTO(event, "ventas-view.fxml", "Ventas");
     }
 
     @FXML

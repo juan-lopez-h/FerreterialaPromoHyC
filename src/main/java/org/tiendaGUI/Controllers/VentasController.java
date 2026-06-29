@@ -71,6 +71,7 @@ public class VentasController implements Initializable {
         // Inicializar lista observable
         productosDTO = FXCollections.observableArrayList();
         tablaProductos.setItems(productosDTO);
+        tablaProductos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // Cargar productos desde MongoDB
         cargarProductosDesdeMongoDB();
