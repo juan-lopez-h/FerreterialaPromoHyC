@@ -179,7 +179,21 @@ public class PedidoController implements Initializable {
 
     @FXML
     private void BtnAgregarProductoOnAction(ActionEvent event) {
-        cambiarVentanaConDTO(event, "ventas-view.fxml", "Ventas");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/tiendaGUI/ventas-view.fxml"));
+            Parent root = loader.load();
+
+            VentasController ventasController = loader.getController();
+            ventasController.setCarritoDTO(carritoDTO);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Ventas");
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error al cargar la pantalla de ventas", e);
+            mostrarAlerta("Error", "No se pudo cargar la pantalla de ventas: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML

@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import org.tiendaGUI.Controllers.PedidoController;
 import org.tiendaGUI.Controllers.loader.ViewLoader;
 import org.tiendaGUI.DTO.CarritoDTO;
 import org.tiendaGUI.DTO.ProductoSimpleDTO;
@@ -48,10 +49,12 @@ public class VentasController implements Initializable {
     private ObservableList<ProductoSimpleDTO> productosDTO;
 
     private CarritoDTO carritoDTO;
+    private boolean volverAlCarrito = false;
 
     public void setCarritoDTO(CarritoDTO carritoDTO) {
         this.carritoDTO = carritoDTO;
         if (carritoDTO != null && carritoDTO.getProductos() != null) {
+            volverAlCarrito = true;
             // Actualizar la tabla con los productos del carrito si existe
             cargarProductos();
         }
@@ -139,6 +142,11 @@ public class VentasController implements Initializable {
 
     @FXML
     private void btnVolverAction(ActionEvent event) {
+        if (volverAlCarrito && carritoDTO != null) {
+            volverAlCarrito(event);
+            return;
+        }
+
         System.out.println(" Volviendo al men principal...");
 
         // Devolver productos al inventario si hay productos en el carrito
@@ -164,6 +172,23 @@ public class VentasController implements Initializable {
         }
 
         cambiarVentana(event, "hello-view.fxml", "Men Principal");
+    }
+
+    private void volverAlCarrito(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/tiendaGUI/pedido-view.fxml"));
+            Parent root = loader.load();
+            PedidoController pedidoController = loader.getController();
+            pedidoController.setCarritoDTO(carritoDTO);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Carrito");
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error al volver al carrito", e);
+            mostrarAlerta("Error", "No se pudo regresar al carrito: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
