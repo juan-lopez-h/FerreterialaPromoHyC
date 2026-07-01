@@ -93,7 +93,6 @@ public class VentasController implements Initializable {
                                     p.getIdProducto(),
                                     p.getNombre(),
                                     p.getPrecioParaVender(),
-                                    0, // Cantidad inicial
                                     p.getCantidad()
                                 );
                                 listaProductos.add(dto);
@@ -227,7 +226,6 @@ public class VentasController implements Initializable {
                             producto.getIdProducto(),
                             producto.getNombre(),
                             producto.getPrecioParaVender(),
-                            0, // Cantidad inicial
                             producto.getCantidad()
                         );
                         productosFiltrados.add(dto);
@@ -270,13 +268,13 @@ public class VentasController implements Initializable {
             mostrarAlerta("Error", "El producto seleccionado no existe o no está disponible.", Alert.AlertType.ERROR);
             return;
         }
-        int stockDisponible = producto.getCantidad() + producto.getStock();
+        int cantidadDisponible = producto.getCantidad();
 
         // Diálogo para ingresar la cantidad
         TextInputDialog dialogoCantidad = new TextInputDialog("1");
         dialogoCantidad.setTitle("Cantidad a Vender");
-        dialogoCantidad.setHeaderText(String.format("Venta de producto: %s\nStock disponible: %d", 
-            producto.getNombre(), stockDisponible));
+        dialogoCantidad.setHeaderText(String.format("Venta de producto: %s\nCantidad disponible: %d", 
+            producto.getNombre(), cantidadDisponible));
         dialogoCantidad.setContentText("Ingrese la cantidad a vender:");
 
         dialogoCantidad.showAndWait().ifPresent(input -> {
@@ -286,20 +284,12 @@ public class VentasController implements Initializable {
                     throw new NumberFormatException("La cantidad debe ser mayor a cero");
                 }
 
-                if (cantidadDeseada > stockDisponible) {
-                    mostrarAlerta("Error", "No hay suficiente stock disponible.", Alert.AlertType.ERROR);
+                if (cantidadDeseada > cantidadDisponible) {
+                    mostrarAlerta("Error", "No hay suficiente cantidad disponible.", Alert.AlertType.ERROR);
                     return;
                 }
 
-                // Calcular cuánto vender de cantidad y cuánto de stock
-                int restante = cantidadDeseada;
-                if (producto.getCantidad() >= restante) {
-                    producto.setCantidad(producto.getCantidad() - restante);
-                } else {
-                    restante -= producto.getCantidad();
-                    producto.setCantidad(0);
-                    producto.setStock(producto.getStock() - restante);
-                }
+                producto.setCantidad(producto.getCantidad() - cantidadDeseada);
 
                 // Actualizar el producto en MongoDB
                 try {

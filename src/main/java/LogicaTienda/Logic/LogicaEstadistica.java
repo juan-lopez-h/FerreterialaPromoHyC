@@ -54,9 +54,9 @@ public class LogicaEstadistica {
         return listaProductos.stream().mapToDouble(Productos::getPrecio).sum();
     }
 
-    // Calcular la cantidad total de productos en stock
+    // Calcular la cantidad total de productos en inventario
     public int calcularTotalProductosEnStock() {
-        return listaProductos.stream().mapToInt(p -> p.getStock() + p.getCantidad()).sum();
+        return listaProductos.stream().mapToInt(Productos::getCantidad).sum();
     }
     
     public List<Productos> getListaProductos() {
@@ -86,10 +86,10 @@ public class LogicaEstadistica {
                 .orElse(null);
     }
 
-    // Obtener el producto con más stock
+    // Obtener el producto con más cantidad disponible
     public Productos obtenerProductoConMasStock() {
         return listaProductos.stream()
-                .max(Comparator.comparingInt(Productos::getStock))
+                .max(Comparator.comparingInt(Productos::getCantidad))
                 .orElse(null);
     }
 
@@ -106,10 +106,10 @@ public class LogicaEstadistica {
         }
     }
 
-    // Calcular el valor total del inventario (precio de venta * stock para todos los productos)
+    // Calcular el valor total del inventario usando la cantidad real de cada producto
     public double calcularValorTotalInventario() {
         return listaProductos.stream()
-                .mapToDouble(producto -> producto.getPrecioParaVender() * (producto.getStock() + producto.getCantidad()))
+                .mapToDouble(producto -> producto.getPrecioParaVender() * producto.getCantidad())
                 .sum();
     }
 }

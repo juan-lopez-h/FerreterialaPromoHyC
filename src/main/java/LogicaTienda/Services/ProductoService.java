@@ -17,7 +17,7 @@ public class ProductoService {
 
     public static List<Productos> obtenerTodosLosProductos() {
         List<Productos> productos = new ArrayList<>();
-        String sql = "SELECT id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad, stock FROM productos ORDER BY nombre";
+        String sql = "SELECT id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad FROM productos ORDER BY nombre";
 
         try (Connection conn = H2Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -38,7 +38,7 @@ public class ProductoService {
             return null;
         }
 
-        String sql = "SELECT id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad, stock FROM productos WHERE id_producto = ?";
+        String sql = "SELECT id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad FROM productos WHERE id_producto = ?";
 
         try (Connection conn = H2Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -74,7 +74,7 @@ public class ProductoService {
             producto.calcularPrecioVenta();
         }
 
-        String sql = "INSERT INTO productos (id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad, stock) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO productos (id_producto, nombre, precio, precio_para_vender, porcentaje_ganancia, cantidad) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = H2Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -84,7 +84,6 @@ public class ProductoService {
             ps.setDouble(4, producto.getPrecioParaVender());
             ps.setDouble(5, producto.getPorcentajeGanancia());
             ps.setInt(6, producto.getCantidad());
-            ps.setInt(7, producto.getStock());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("❌ No se pudo guardar el producto: " + e.getMessage());
@@ -100,7 +99,7 @@ public class ProductoService {
             producto.calcularPrecioVenta();
         }
 
-        String sql = "UPDATE productos SET nombre = ?, precio = ?, precio_para_vender = ?, porcentaje_ganancia = ?, cantidad = ?, stock = ? WHERE id_producto = ?";
+        String sql = "UPDATE productos SET nombre = ?, precio = ?, precio_para_vender = ?, porcentaje_ganancia = ?, cantidad = ? WHERE id_producto = ?";
 
         try (Connection conn = H2Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -109,8 +108,7 @@ public class ProductoService {
             ps.setDouble(3, producto.getPrecioParaVender());
             ps.setDouble(4, producto.getPorcentajeGanancia());
             ps.setInt(5, producto.getCantidad());
-            ps.setInt(6, producto.getStock());
-            ps.setString(7, producto.getIdProducto());
+            ps.setString(6, producto.getIdProducto());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("❌ No se pudo actualizar el producto: " + e.getMessage());
@@ -141,7 +139,7 @@ public class ProductoService {
         try (Connection conn = H2Database.getConnection()) {
             ajustarStock(conn, idProducto, cantidad, esVenta);
         } catch (SQLException e) {
-            System.err.println("Error al actualizar el stock del producto " + idProducto + ": " + e.getMessage());
+            System.err.println("Error al actualizar la cantidad del producto " + idProducto + ": " + e.getMessage());
         }
     }
 
@@ -150,27 +148,23 @@ public class ProductoService {
             return;
         }
 
-        String buscarSql = "SELECT cantidad, stock FROM productos WHERE id_producto = ?";
+        String buscarSql = "SELECT cantidad FROM productos WHERE id_producto = ?";
         try (PreparedStatement buscar = conn.prepareStatement(buscarSql)) {
             buscar.setString(1, idProducto);
             try (ResultSet rs = buscar.executeQuery()) {
                 if (!rs.next()) {
-                    System.err.println("Producto no encontrado para actualizar stock: " + idProducto);
+                    System.err.println("Producto no encontrado para actualizar la cantidad: " + idProducto);
                     return;
                 }
 
                 int cantidadActual = rs.getInt("cantidad");
-                int stockActual = rs.getInt("stock");
 
                 if (esVenta) {
-                    int cantidadARestar = Math.min(cantidad, cantidadActual);
-                    int stockARestar = Math.max(0, cantidad - cantidadARestar);
-
-                    String updateSql = "UPDATE productos SET cantidad = GREATEST(cantidad - ?, 0), stock = GREATEST(stock - ?, 0) WHERE id_producto = ?";
+                    int nuevaCantidad = Math.max(0, cantidadActual - cantidad);
+                    String updateSql = "UPDATE productos SET cantidad = ? WHERE id_producto = ?";
                     try (PreparedStatement update = conn.prepareStatement(updateSql)) {
-                        update.setInt(1, cantidadARestar);
-                        update.setInt(2, stockARestar);
-                        update.setString(3, idProducto);
+                        update.setInt(1, nuevaCantidad);
+                        update.setString(2, idProducto);
                         update.executeUpdate();
                     }
                 } else {
@@ -182,10 +176,9 @@ public class ProductoService {
                     }
                 }
 
-                System.out.println("Stock actualizado para el producto " + idProducto +
+                System.out.println("Cantidad actualizada para el producto " + idProducto +
                         ". Operación: " + (esVenta ? "Venta" : "Devolución") +
-                        ", Cantidad: " + cantidad +
-                        ", Stock previo: " + stockActual +
+                        ", Cantidad solicitada: " + cantidad +
                         ", Cantidad previa: " + cantidadActual);
             }
         }
@@ -199,7 +192,6 @@ public class ProductoService {
         producto.setPrecioParaVender(rs.getDouble("precio_para_vender"));
         producto.setPorcentajeGanancia(rs.getDouble("porcentaje_ganancia"));
         producto.setCantidad(rs.getInt("cantidad"));
-        producto.setStock(rs.getInt("stock"));
         return producto;
     }
 

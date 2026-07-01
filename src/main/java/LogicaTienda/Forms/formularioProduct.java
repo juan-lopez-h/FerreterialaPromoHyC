@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class formularioProduct extends Stage {
-    private TextField idProductoField, nombreField, precioField, porcentajeGananciaField, cantidadField, stockField;
+    private TextField idProductoField, nombreField, precioField, porcentajeGananciaField, cantidadField;
     private Button submitButton;
     private final ObservableList<Productos> productos;
     private static final Logger LOGGER = Logger.getLogger(formularioProduct.class.getName());
@@ -35,7 +35,6 @@ public class formularioProduct extends Stage {
         precioField = new TextField();
         porcentajeGananciaField = new TextField();
         cantidadField = new TextField();
-        stockField = new TextField();
 
         int row = 0;
         boolean esNuevo = producto == null && !esEliminacion;
@@ -58,8 +57,6 @@ public class formularioProduct extends Stage {
             grid.add(porcentajeGananciaField, 1, row++);
             grid.add(new Label("Cantidad:"), 0, row);
             grid.add(cantidadField, 1, row++);
-            grid.add(new Label("Stock:"), 0, row);
-            grid.add(stockField, 1, row++);
         }
 
         submitButton = new Button(esEliminacion ? "Eliminar" : "Guardar");
@@ -72,7 +69,6 @@ public class formularioProduct extends Stage {
             precioField.setText(String.valueOf(producto.getPrecio()));
             porcentajeGananciaField.setText(String.valueOf(producto.getPorcentajeGanancia()));
             cantidadField.setText(String.valueOf(producto.getCantidad()));
-            stockField.setText(String.valueOf(producto.getStock()));
             idProductoField.setEditable(false);
             idProductoField.setDisable(true);
         }
@@ -83,7 +79,6 @@ public class formularioProduct extends Stage {
             precioField.setDisable(true);
             porcentajeGananciaField.setDisable(true);
             cantidadField.setDisable(true);
-            stockField.setDisable(true);
             if (idProductoField != null) {
                 idProductoField.setEditable(true);
                 idProductoField.setDisable(false);
@@ -118,7 +113,7 @@ public class formularioProduct extends Stage {
             return mostrarError("El nombre no puede estar vacío.");
         }
 
-        if (!validarCamposNumericos(precioField, cantidadField, stockField)) {
+        if (!validarCamposNumericos(precioField, cantidadField)) {
             return false;
         }
 
@@ -137,7 +132,6 @@ public class formularioProduct extends Stage {
         }
 
         int cantidad = Integer.parseInt(cantidadField.getText().trim());
-        int stock = Integer.parseInt(stockField.getText().trim());
 
         try {
             if (productoExistente != null) {
@@ -145,7 +139,6 @@ public class formularioProduct extends Stage {
                 productoExistente.setPrecio(precio);
                 productoExistente.setPorcentajeGanancia(porcentajeGanancia);
                 productoExistente.setCantidad(cantidad);
-                productoExistente.setStock(stock);
                 productoExistente.calcularPrecioVenta();
 
                 try {
@@ -155,7 +148,7 @@ public class formularioProduct extends Stage {
                     return mostrarError("No se pudo actualizar el producto en la base de datos: " + e.getMessage());
                 }
             } else {
-                Productos nuevoProducto = new Productos("", nombre, precio, porcentajeGanancia, cantidad, stock);
+                Productos nuevoProducto = new Productos("", nombre, precio, porcentajeGanancia, cantidad, 0);
                 nuevoProducto.calcularPrecioVenta();
 
                 try {
@@ -207,11 +200,10 @@ public class formularioProduct extends Stage {
         }
     }
 
-    private boolean validarCamposNumericos(TextField precioField, TextField cantidadField, TextField stockField) {
+    private boolean validarCamposNumericos(TextField precioField, TextField cantidadField) {
         try {
             if (precioField.getText().trim().isEmpty() ||
-                cantidadField.getText().trim().isEmpty() ||
-                stockField.getText().trim().isEmpty()) {
+                cantidadField.getText().trim().isEmpty()) {
                 return mostrarError("Todos los campos numéricos son obligatorios.");
             }
 
@@ -221,9 +213,8 @@ public class formularioProduct extends Stage {
                 porcentajeGanancia = Double.parseDouble(porcentajeGananciaField.getText().trim());
             }
             int cantidad = Integer.parseInt(cantidadField.getText().trim());
-            int stock = Integer.parseInt(stockField.getText().trim());
 
-            if (precio < 0 || porcentajeGanancia < 0 || cantidad < 0 || stock < 0) {
+            if (precio < 0 || porcentajeGanancia < 0 || cantidad < 0) {
                 return mostrarError("Los valores numéricos deben ser positivos.");
             }
             return true;

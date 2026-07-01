@@ -323,7 +323,6 @@ public class FacturaService {
                     producto.setCantidad(rs.getInt("cantidad"));
                     producto.setPrecio(rs.getDouble("precio_unitario"));
                     producto.setPrecioParaVender(rs.getDouble("precio_unitario"));
-                    producto.setStock(0);
                     productos.add(producto);
                 }
             }

@@ -18,12 +18,12 @@ public class LogicaVentas {
         int ubicacion = listaProductos.indexOf(productoVenta);
         if (ubicacion >= 0) {
             Productos producto = listaProductos.get(ubicacion);
-            if (producto.getStock() >= cantidad) { // Verifica si hay suficiente stock
-                producto.setStock(producto.getStock() - cantidad);
+            if (producto.getCantidad() >= cantidad) {
+                producto.setCantidad(producto.getCantidad() - cantidad);
                 return true;
             }
         }
-        return false; // Venta no realizada
+        return false;
     }
 
     public boolean actualizarTodosPrecios(double porcentajeCambio) {
