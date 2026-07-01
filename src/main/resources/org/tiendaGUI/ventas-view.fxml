@@ -39,7 +39,6 @@
                 <TableColumn fx:id="columnaPrecio" text="Precio" />
                 <TableColumn fx:id="columnaCantidad" text="Cantidad" />
                 <TableColumn fx:id="columnaId" text="ProductoID" />
-                <TableColumn fx:id="columnaStock" text="Stock" />
               </columns>
             </TableView>
             <ToolBar prefHeight="40.0" style="-fx-background-color: #90B1DB;" maxWidth="Infinity">

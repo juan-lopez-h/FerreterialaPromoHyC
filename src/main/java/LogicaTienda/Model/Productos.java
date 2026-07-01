@@ -18,7 +18,6 @@ public class Productos implements Serializable {
     private double precioParaVender;
     private double porcentajeGanancia;
     private int cantidad;
-    private int stock;
 
     // No-arg constructor
     public Productos() {
@@ -28,7 +27,6 @@ public class Productos implements Serializable {
         this.precioParaVender = 0.0;
         this.porcentajeGanancia = 0.0;
         this.cantidad = 0;
-        this.stock = 0;
     }
 
     public Productos(String idProducto, String nombre, double precio, int cantidad, int stock) {
@@ -37,7 +35,6 @@ public class Productos implements Serializable {
         this.nombre = nombre;
         this.precio = precio;
         this.cantidad = cantidad;
-        this.stock = stock;
         this.porcentajeGanancia = 0;
         this.precioParaVender = precio;
     }
@@ -49,7 +46,6 @@ public class Productos implements Serializable {
         this.precio = precio;
         this.porcentajeGanancia = porcentajeGanancia;
         this.cantidad = cantidad;
-        this.stock = stock;
         calcularPrecioVenta();
     }
 
@@ -60,6 +56,6 @@ public class Productos implements Serializable {
 
     @Override
     public String toString() {
-        return "nombre del producto: " + this.nombre + " ID del producto: " + this.idProducto + " cantidad en almacen: " + this.stock + " el precio de costo: " + this.precio + " el precio de venta: " + this.precioParaVender;
+        return "nombre del producto: " + this.nombre + " ID del producto: " + this.idProducto + " cantidad en almacen: " + this.cantidad + " el precio de costo: " + this.precio + " el precio de venta: " + this.precioParaVender;
     }
 }

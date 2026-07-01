@@ -1,11 +1,8 @@
 package LogicaTienda.Model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 public class Pago implements Serializable {

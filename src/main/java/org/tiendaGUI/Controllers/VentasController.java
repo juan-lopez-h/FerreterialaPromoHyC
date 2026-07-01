@@ -41,7 +41,6 @@ public class VentasController implements Initializable {
     @FXML private TableColumn<ProductoSimpleDTO, String> columnaNombre;
     @FXML private TableColumn<ProductoSimpleDTO, Double> columnaPrecio;
     @FXML private TableColumn<ProductoSimpleDTO, Integer> columnaCantidad;
-    @FXML private TableColumn<ProductoSimpleDTO, Integer> columnaStock;
     @FXML private TableColumn<ProductoSimpleDTO, String> columnaId;
     @FXML private TextField txtBusqueda;
 
@@ -68,7 +67,6 @@ public class VentasController implements Initializable {
         columnaNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         columnaPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         columnaCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        columnaStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
         // Inicializar lista observable
         productosDTO = FXCollections.observableArrayList();
