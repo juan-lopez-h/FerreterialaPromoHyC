@@ -16,7 +16,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import org.tiendaGUI.Controllers.PedidoController;
 import org.tiendaGUI.Controllers.loader.ViewLoader;
 import org.tiendaGUI.DTO.CarritoDTO;
 import org.tiendaGUI.DTO.ProductoSimpleDTO;
