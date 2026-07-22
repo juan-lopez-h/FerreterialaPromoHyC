@@ -10,7 +10,7 @@ class LogicaVentasTest {
 
     @Test
     void venderDebeReducirSoloLaCantidadTotal() {
-        Productos producto = new Productos("1", "Martillo", 1000.0, 10, 0);
+        Productos producto = new Productos("1", "Martillo", 1000.0, 10);
 
         boolean resultado = new LogicaVentas().vender(producto, 4);
 

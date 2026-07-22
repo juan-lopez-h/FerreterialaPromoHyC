@@ -29,7 +29,7 @@ public class Productos implements Serializable {
         this.cantidad = 0;
     }
 
-    public Productos(String idProducto, String nombre, double precio, int cantidad, int stock) {
+    public Productos(String idProducto, String nombre, double precio, int cantidad) {
         this();
         this.idProducto = idProducto;
         this.nombre = nombre;
@@ -39,7 +39,7 @@ public class Productos implements Serializable {
         this.precioParaVender = precio;
     }
 
-    public Productos(String idProducto, String nombre, double precio, double porcentajeGanancia, int cantidad, int stock) {
+    public Productos(String idProducto, String nombre, double precio, double porcentajeGanancia, int cantidad) {
         this();
         this.idProducto = idProducto;
         this.nombre = nombre;

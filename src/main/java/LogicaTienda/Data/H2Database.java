@@ -34,14 +34,13 @@ public final class H2Database {
             try (Connection connection = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
                  Statement statement = connection.createStatement()) {
                 statement.execute("CREATE TABLE IF NOT EXISTS productos (" +
-                        "id_producto VARCHAR(64) PRIMARY KEY, " +
-                        "nombre VARCHAR(255) NOT NULL, " +
-                        "precio DOUBLE PRECISION NOT NULL, " +
-                        "precio_para_vender DOUBLE PRECISION NOT NULL, " +
-                        "porcentaje_ganancia DOUBLE PRECISION NOT NULL, " +
-                        "cantidad INT NOT NULL, " +
-                        "stock INT NOT NULL"
-                        + ")");
+                    "id_producto VARCHAR(64) PRIMARY KEY, " +
+                    "nombre VARCHAR(255) NOT NULL, " +
+                    "precio DOUBLE PRECISION NOT NULL, " +
+                    "precio_para_vender DOUBLE PRECISION NOT NULL, " +
+                    "porcentaje_ganancia DOUBLE PRECISION NOT NULL, " +
+                    "cantidad INT NOT NULL"
+                    + ")");
 
                 statement.execute("CREATE TABLE IF NOT EXISTS facturas (" +
                         "id VARCHAR(64) PRIMARY KEY, " +
@@ -88,6 +87,12 @@ public final class H2Database {
                         "meta_key VARCHAR(100) PRIMARY KEY, " +
                         "meta_value VARCHAR(500) NOT NULL"
                         + ")");
+                // Si hay una versión anterior de la base de datos que contenía la columna 'stock', eliminarla.
+                try {
+                    statement.execute("ALTER TABLE productos DROP COLUMN stock");
+                } catch (SQLException ignore) {
+                    // Ignorar si la columna no existe o si la operación no es soportada en la versión actual.
+                }
             }
 
             initialized = true;

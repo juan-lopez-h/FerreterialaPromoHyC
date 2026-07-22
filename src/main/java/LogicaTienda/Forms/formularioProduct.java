@@ -148,7 +148,7 @@ public class formularioProduct extends Stage {
                     return mostrarError("No se pudo actualizar el producto en la base de datos: " + e.getMessage());
                 }
             } else {
-                Productos nuevoProducto = new Productos("", nombre, precio, porcentajeGanancia, cantidad, 0);
+                Productos nuevoProducto = new Productos("", nombre, precio, porcentajeGanancia, cantidad);
                 nuevoProducto.calcularPrecioVenta();
 
                 try {

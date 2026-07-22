@@ -302,12 +302,11 @@ public class VentasController implements Initializable {
 
                 // Crear una copia del producto para el carrito
                 Productos productoCarrito = new Productos(
-                    producto.getIdProducto(), 
-                    producto.getNombre(), 
-                    producto.getPrecio(), 
+                    producto.getIdProducto(),
+                    producto.getNombre(),
+                    producto.getPrecio(),
                     producto.getPorcentajeGanancia(),
-                    cantidadDeseada, 
-                    0
+                    cantidadDeseada
                 );
                 productoCarrito.calcularPrecioVenta();
 

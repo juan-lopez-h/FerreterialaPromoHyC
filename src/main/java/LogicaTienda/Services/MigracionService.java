@@ -35,11 +35,11 @@ public class MigracionService {
     private static void crearProductosIniciales() {
         List<Productos> productosIniciales = new ArrayList<>();
 
-        productosIniciales.add(new Productos("P001", "Martillo", 15000, 20, 10));
-        productosIniciales.add(new Productos("P002", "Destornillador Phillips", 8000, 25, 20));
-        productosIniciales.add(new Productos("P003", "Llave Inglesa 12\"", 25000, 15, 5));
-        productosIniciales.add(new Productos("P004", "Cinta Métrica 5m", 12000, 30, 15));
-        productosIniciales.add(new Productos("P005", "Sierra Manual", 18000, 20, 8));
+        productosIniciales.add(new Productos("P001", "Martillo", 15000, 20));
+        productosIniciales.add(new Productos("P002", "Destornillador Phillips", 8000, 25));
+        productosIniciales.add(new Productos("P003", "Llave Inglesa 12\"", 25000, 15));
+        productosIniciales.add(new Productos("P004", "Cinta Métrica 5m", 12000, 30));
+        productosIniciales.add(new Productos("P005", "Sierra Manual", 18000, 20));
 
         try {
             for (Productos producto : productosIniciales) {
