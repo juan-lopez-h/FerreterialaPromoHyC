@@ -15,6 +15,8 @@
         <junit.version>5.10.0</junit.version>
         <itext.version>7.2.5</itext.version>
         <h2.version>2.3.232</h2.version>
+        <!-- Default compiler release for builds. Use -Pjava25 to target Java 25. -->
+        <maven.compiler.release>17</maven.compiler.release>
         <app.name>FerreteriaLaPromoHC</app.name>
         <app.version>1.0.0</app.version>
         <app.vendor>FerreteriaLaPromo</app.vendor>
@@ -128,8 +130,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <!-- Use Java <release> to ensure consistent target and bootclasspath handling -->
-                    <release>25</release>
+                    <!-- Use a property so we can build with Java 17 by default and opt-in to Java 25 -->
+                    <release>${maven.compiler.release}</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -285,4 +287,12 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>java25</id>
+            <properties>
+                <maven.compiler.release>25</maven.compiler.release>
+            </properties>
+        </profile>
+    </profiles>
 </project>
