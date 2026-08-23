@@ -21,6 +21,8 @@
         <app.version>1.0.0</app.version>
         <app.vendor>FerreteriaLaPromo</app.vendor>
         <app.mainClass>app.Launcher</app.mainClass>
+        <!-- Control whether to run jpackage via exec plugin (default: true to skip on CI/Linux) -->
+        <skip.jpackage>true</skip.jpackage>
     </properties>
 
     <dependencies>
@@ -280,7 +282,7 @@
                                 <argument>--dest</argument>
                                 <argument>${project.build.directory}/dist</argument>
                             </arguments>
-                            <skip>false</skip> <!-- Cambiar a false cuando esté listo para empaquetar -->
+                            <skip>${skip.jpackage}</skip> <!-- Set to false with -Dskip.jpackage=false to enable jpackage -->
                         </configuration>
                     </execution>
                 </executions>
