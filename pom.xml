@@ -15,10 +15,14 @@
         <junit.version>5.10.0</junit.version>
         <itext.version>7.2.5</itext.version>
         <h2.version>2.3.232</h2.version>
+        <!-- Default compiler release for builds. Use -Pjava25 to target Java 25. -->
+        <maven.compiler.release>17</maven.compiler.release>
         <app.name>FerreteriaLaPromoHC</app.name>
         <app.version>1.0.0</app.version>
         <app.vendor>FerreteriaLaPromo</app.vendor>
         <app.mainClass>app.Launcher</app.mainClass>
+        <!-- Control whether to run jpackage via exec plugin (default: true to skip on CI/Linux) -->
+        <skip.jpackage>true</skip.jpackage>
     </properties>
 
     <dependencies>
@@ -128,8 +132,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <!-- Use a property so we can build with Java 17 by default and opt-in to Java 25 -->
+                    <release>${maven.compiler.release}</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -278,11 +282,19 @@
                                 <argument>--dest</argument>
                                 <argument>${project.build.directory}/dist</argument>
                             </arguments>
-                            <skip>false</skip> <!-- Cambiar a false cuando esté listo para empaquetar -->
+                            <skip>${skip.jpackage}</skip> <!-- Set to false with -Dskip.jpackage=false to enable jpackage -->
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>java25</id>
+            <properties>
+                <maven.compiler.release>25</maven.compiler.release>
+            </properties>
+        </profile>
+    </profiles>
 </project>

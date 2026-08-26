@@ -22,6 +22,10 @@ import com.itextpdf.io.image.ImageDataFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.format.DateTimeFormatter;
@@ -57,15 +61,19 @@ public class PDFGenerator {
 
         // Obtener carpeta Descargas según SO
         String userHome = System.getProperty("user.home");
-        File downloads = new File(userHome, "Downloads"); // Windows, Mac
-        if (!downloads.exists() || !downloads.isDirectory()) {
-            downloads = new File(userHome, "Descargas"); // Linux en español
+        Path downloadsPath = Path.of(userHome, "Downloads"); // Windows, Mac
+        if (!Files.isDirectory(downloadsPath)) {
+            downloadsPath = Path.of(userHome, "Descargas"); // Linux en español
         }
 
         // Crear directorio de descargas si no existe
-        if ((!downloads.exists() || !downloads.isDirectory()) && !downloads.mkdirs()) {
-            throw new IOException("No se pudo crear el directorio de descargas: " + downloads.getAbsolutePath());
+        try {
+            Files.createDirectories(downloadsPath);
+        } catch (IOException e) {
+            throw new IOException("No se pudo crear el directorio de descargas: " + downloadsPath, e);
         }
+
+        File downloads = downloadsPath.toFile();
 
         // Determinar el nombre del archivo según el tipo de factura
         String fileName = "FACTURA_" + (factura.getId() != null ? factura.getId() : "SIN_ID") + ".pdf";
@@ -107,11 +115,18 @@ public class PDFGenerator {
             // Encabezado
             Table header = new Table(2).useAllAvailableWidth();
 
-            // Cargar logo
-            String logoPath = PDFGenerator.class.getResource("/org/tiendaGUI/images/LogoFerreteria.png").getPath();
-            Image logo = new Image(ImageDataFactory.create(logoPath))
-                    .setWidth(100)
-                    .setHorizontalAlignment(HorizontalAlignment.LEFT);
+            // Cargar logo de forma robusta desde el classpath
+            URL logoUrl = PDFGenerator.class.getResource("/org/tiendaGUI/images/LogoFerreteria.png");
+            if (logoUrl == null) {
+                throw new IOException("No se encontró el logo de la empresa en el classpath");
+            }
+
+            Image logo;
+            try (InputStream logoStream = logoUrl.openStream()) {
+                logo = new Image(ImageDataFactory.create(logoStream.readAllBytes()))
+                        .setWidth(100)
+                        .setHorizontalAlignment(HorizontalAlignment.LEFT);
+            }
 
             // Información de la empresa
             Cell empresaCell = new Cell().setBorder(null);
